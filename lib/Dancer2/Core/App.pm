@@ -14,6 +14,7 @@ use Module::Runtime    'use_module';
 use Plack::Middleware::FixMissingBodyInRedirect;
 use Plack::Middleware::Head;
 use Plack::Middleware::Static;
+use Plack::Middleware::ConditionalGET;
 
 use Dancer2::FileUtils 'path';
 use Dancer2::Core;
@@ -1387,6 +1388,7 @@ sub to_app {
             root => $self->config->{public_dir},
             content_type => sub { $self->mime_type->for_name(shift) },
         );
+        $psgi = Plack::Middleware::ConditionalGET->wrap($psgi);
     }
 
     # Apply Head. After static so a HEAD request on static content DWIM.
